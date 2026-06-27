@@ -9,6 +9,14 @@ class OrmBase(ResponseBase):
     id: int
     model_config = ConfigDict(from_attributes=True)
 
+
+class WishListItemResponse(OrmBase):
+    name: str
+    description: Optional[str]
+    link: Optional[str]
+    purchased: bool
+    sort_order: int
+
 class WishListItemCreate(OrmBase):
     name: str
     description: Optional[str]
@@ -17,4 +25,11 @@ class WishListItemCreate(OrmBase):
     sort_order: int
 
 class WishListItensList(OrmBase):
-    itens: list[WishListItemCreate]
+    itens: list[WishListItemResponse]
+
+class WishListItemUpdated(OrmBase):
+    name: str
+    description: Optional[str]
+    link: Optional[str]
+    purchased: bool
+    sort_order: int
