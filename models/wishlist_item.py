@@ -1,12 +1,13 @@
 from factory import db
+from sqlalchemy import text
 
-class WishListItem(db.Model):
+class WishlistItem(db.Model):
     __tablename__ = "wishlistitem"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, nullable=False, index=True)
     description = db.Column(db.Text, nullable=True)
     link = db.Column(db.String(255), nullable=True)
-    purchased = db.Column(db.Boolean, default=False)
+    purchased = db.Column(db.Boolean, server_default=text("false"), nullable=False)
     sort_order = db.Column(db.Integer, nullable=True)
 
     def __repr__(self) -> str:
