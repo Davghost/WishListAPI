@@ -2,7 +2,7 @@ from factory import db, api
 from spectree import Response
 from flask import Blueprint, jsonify
 from sqlalchemy import select
-from models.wishlist_item import WishListItem
+from models.wishlist_item import WishlistItem
 from flask.globals import request
 from schemas.utils_response import DefaultRespose
 from schemas.wishlist_item import WishListItemCreate, WishListItensList, WishListItemUpdated, WishListItemResponse
@@ -15,7 +15,7 @@ def getall_itens():
     """
     Return all itens
     """
-    itens = db.session.scalars(select(WishListItem)).all()
+    itens = db.session.scalars(select(WishlistItem)).all()
 
     if not itens:
         return {"msg": "There is no itens"}, 404
@@ -45,7 +45,7 @@ def get_item(item_id):
     """
     Return an item
     """
-    item = db.session.get(WishListItem, item_id)
+    item = db.session.get(WishlistItem, item_id)
 
     if item is None:
         return {"msg": f"There is no item with id {item_id}"}, 404
@@ -71,11 +71,11 @@ def post_item():
     data = request.json
 
     if db.session.scalars(
-        select(WishListItem).filter_by(name=data["name"])
+        select(WishlistItem).filter_by(name=data["name"])
     ).first():
         return {"msg": "name not available"}, 409
     
-    item = WishListItem(
+    item = WishlistItem(
         name = data["name"],
         description = data["description"] if "description" in data else None,
         link = data["link"] if "link" in data else None,
@@ -94,7 +94,7 @@ def put_item(item_id):
     """
     Update an item
     """
-    item = db.session.get(WishListItem, item_id)
+    item = db.session.get(WishlistItem, item_id)
 
     if not item:
         return {"msg": f"There is no item with id {item_id}"}, 404
@@ -119,7 +119,7 @@ def delete_item(item_id):
     """
     Delete an item
     """
-    item = db.session.get(WishListItem, item_id)
+    item = db.session.get(WishlistItem, item_id)
 
     if not item:
         return {

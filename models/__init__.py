@@ -1,1 +1,1 @@
-from .wishlist_item import WishListItem
+from .wishlist_item import WishlistItem

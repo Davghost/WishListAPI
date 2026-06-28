@@ -13,7 +13,7 @@ def create_app():
     app.config.from_object(Config)
     db.init_app(app)
 
-    from models import WishListItem
+    from models import WishlistItem
 
     migrate.init_app(app, db)
 
