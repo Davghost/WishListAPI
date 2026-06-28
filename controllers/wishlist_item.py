@@ -39,8 +39,8 @@ def getall_itens():
     #    ] 
     #), 200
 
-    response = WishListItensList(
-        itens=[WishListItemResponse.model_validate(item) for item in itens]
+    response = WishlistItemsList(
+        itens=[WishlistItemResponse.model_validate(item) for item in itens]
     ).to_response_dict()
     return response, 200
 
@@ -64,11 +64,11 @@ def get_item(item_id):
     #    "sort_order": item.sort_order if item.sort_order else None,
     #}, 200
 
-    response = WishListItemResponse.model_validate(item).to_response_dict()
+    response = WishlistItemResponse.model_validate(item).to_response_dict()
     return response, 200
 
 @wishlist_controller.post("/")
-@api.validate(json=WishlistItemCreate, resp=Response(HTTP_201=WishlistItemResponse), tags=["wishlist"])
+@api.validate(json=WishlistItemCreate, resp=Response(HTTP_201=WishlistItemMessage), tags=["wishlist"])
 def post_item():
     """
     Create an item
@@ -84,14 +84,14 @@ def post_item():
         name = data["name"],
         description = data["description"] if "description" in data else None,
         link = data["link"] if "link" in data else None,
-        purchased = data["purchased"],
+        purchased = data.get("purchased", False),
         sort_order = data["sort_order"] if "sort_order" in data else None
     )
 
     db.session.add(item)
     db.session.commit()
 
-    response = WishlistItemResponse.model_validate(item).to_response_dict()
+    response = WishlistItemMessage(id=item.id, msg="Item added in wishlist successfully").model_dump()
     return response, 201
 
 @wishlist_controller.put("/<int:item_id>")
