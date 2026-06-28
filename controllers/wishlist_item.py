@@ -4,13 +4,18 @@ from flask import Blueprint, jsonify
 from sqlalchemy import select
 from models.wishlist_item import WishlistItem
 from flask.globals import request
-from schemas.utils_response import DefaultRespose
-from schemas.wishlist_item import WishListItemCreate, WishListItensList, WishListItemUpdated, WishListItemResponse
+from schemas.wishlist_item import (
+    WishlistItemCreate,
+    WishlistItemsList,
+    WishlistItemUpdate,
+    WishlistItemResponse,
+    WishlistItemMessage,
+)
 
 wishlist_controller = Blueprint("wishlist_controller", __name__, url_prefix="/api/wishlist")
 
 @wishlist_controller.get("/")
-@api.validate(resp=Response(HTTP_200=WishListItensList, HTTP_404=DefaultRespose), tags=["wishlist"])
+@api.validate(resp=Response(HTTP_200=WishlistItemsList, HTTP_404=WishlistItemMessage), tags=["wishlist"])
 def getall_itens():
     """
     Return all itens
@@ -18,7 +23,7 @@ def getall_itens():
     itens = db.session.scalars(select(WishlistItem)).all()
 
     if not itens:
-        return {"msg": "There is no itens"}, 404
+        return {"id": None, "msg": "There is no itens"}, 404
     
     #return jsonify(
     #    [
@@ -40,7 +45,7 @@ def getall_itens():
     return response, 200
 
 @wishlist_controller.get("/<int:item_id>")
-@api.validate(resp=Response(HTTP_200=WishListItemResponse, HTTP_404=DefaultRespose), tags=["wishlist"])
+@api.validate(resp=Response(HTTP_200=WishlistItemResponse, HTTP_404=WishlistItemMessage), tags=["wishlist"])
 def get_item(item_id):
     """
     Return an item
@@ -48,7 +53,7 @@ def get_item(item_id):
     item = db.session.get(WishlistItem, item_id)
 
     if item is None:
-        return {"msg": f"There is no item with id {item_id}"}, 404
+        return {"id": None, "msg": f"There is no item with id {item_id}"}, 404
     
     #return {
     #    "id": item.id,
@@ -59,11 +64,11 @@ def get_item(item_id):
     #    "sort_order": item.sort_order if item.sort_order else None,
     #}, 200
 
-    response = WishListItemCreate.model_validate(item).to_response_dict()
+    response = WishListItemResponse.model_validate(item).to_response_dict()
     return response, 200
 
 @wishlist_controller.post("/")
-@api.validate(json=WishListItemCreate, resp=Response(HTTP_200=WishListItemResponse), tags=["wishlist"])
+@api.validate(json=WishlistItemCreate, resp=Response(HTTP_201=WishlistItemResponse), tags=["wishlist"])
 def post_item():
     """
     Create an item
@@ -73,7 +78,7 @@ def post_item():
     if db.session.scalars(
         select(WishlistItem).filter_by(name=data["name"])
     ).first():
-        return {"msg": "name not available"}, 409
+        return {"id": None, "msg": "name not available"}, 409
     
     item = WishlistItem(
         name = data["name"],
@@ -86,10 +91,11 @@ def post_item():
     db.session.add(item)
     db.session.commit()
 
-    return {"msg": "Item added in wishlist wish success"}, 201
+    response = WishlistItemResponse.model_validate(item).to_response_dict()
+    return response, 201
 
 @wishlist_controller.put("/<int:item_id>")
-@api.validate(json=WishListItemUpdated, resp=Response(HTTP_200=WishListItemResponse, HTTP_404=DefaultRespose), tags=["wishlist"])
+@api.validate(json=WishlistItemUpdate, resp=Response(HTTP_200=WishlistItemResponse, HTTP_404=WishlistItemMessage), tags=["wishlist"])
 def put_item(item_id):
     """
     Update an item
@@ -97,7 +103,7 @@ def put_item(item_id):
     item = db.session.get(WishlistItem, item_id)
 
     if not item:
-        return {"msg": f"There is no item with id {item_id}"}, 404
+        return {"id": None, "msg": f"There is no item with id {item_id}"}, 404
 
     data = request.json
     
@@ -108,13 +114,11 @@ def put_item(item_id):
     item.sort_order = data["sort_order"] if "sort_order" in data else None
 
     db.session.commit()
-    return {
-        "id": item.id,
-        "msg": "Item atualizado com sucesso."
-    }, 200
+    response = WishlistItemResponse.model_validate(item).to_response_dict()
+    return response, 200
 
 @wishlist_controller.delete("/<int:item_id>")
-@api.validate(resp=Response(HTTP_200=DefaultRespose, HTTP_404=DefaultRespose), tags=["wishlist"])
+@api.validate(resp=Response(HTTP_200=WishlistItemMessage, HTTP_404=WishlistItemMessage), tags=["wishlist"])
 def delete_item(item_id):
     """
     Delete an item
@@ -123,7 +127,7 @@ def delete_item(item_id):
 
     if not item:
         return {
-            "id": item.id,
+            "id": None,
             "msg": f"There is no item with id {item_id}"
         }, 404
     

@@ -1,35 +1,44 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from typing import Optional, List
+
 
 class ResponseBase(BaseModel):
     def to_response_dict(self):
         return self.model_dump(mode="json")
+
 
 class OrmBase(ResponseBase):
     id: int
     model_config = ConfigDict(from_attributes=True)
 
 
-class WishListItemResponse(OrmBase):
+class WishlistItemResponse(OrmBase):
     name: str
-    description: Optional[str]
-    link: Optional[str]
+    description: Optional[str] = None
+    link: Optional[str] = None
     purchased: bool
-    sort_order: int
+    sort_order: Optional[int] = None
 
-class WishListItemCreate(OrmBase):
+
+class WishlistItemCreate(BaseModel):
     name: str
-    description: Optional[str]
-    link: Optional[str]
-    purchased: bool
-    sort_order: int
+    description: Optional[str] = None
+    link: Optional[str] = None
+    sort_order: Optional[int] = None
 
-class WishListItensList(OrmBase):
-    itens: list[WishListItemResponse]
 
-class WishListItemUpdated(OrmBase):
+class WishlistItemUpdate(BaseModel):
     name: str
-    description: Optional[str]
-    link: Optional[str]
+    description: Optional[str] = None
+    link: Optional[str] = None
     purchased: bool
-    sort_order: int
+    sort_order: Optional[int] = None
+
+
+class WishlistItemsList(ResponseBase):
+    itens: List[WishlistItemResponse]
+
+
+class WishlistItemMessage(BaseModel):
+    id: int
+    msg: str
