@@ -16,6 +16,7 @@ class WishlistItemResponse(OrmBase):
     name: str
     description: Optional[str] = None
     link: Optional[str] = None
+    wishlist_id: int
     purchased: bool
     sort_order: Optional[int] = None
 
@@ -25,6 +26,7 @@ class WishlistItemCreate(BaseModel):
     description: Optional[str] = None
     link: Optional[str] = None
     sort_order: Optional[int] = None
+    wishlist_id: int
 
 
 class WishlistItemUpdate(BaseModel):

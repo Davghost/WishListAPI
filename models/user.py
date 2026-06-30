@@ -1,6 +1,5 @@
 from factory import db
 from pydantic import BaseModel
-from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
@@ -8,6 +7,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(256), index=True)
+
+    wishlists = db.relationship("Wishlist", back_populates="user", lazy="dynamic")
 
     def __repr__(self) -> str:
         return f"<User {self.name}>"

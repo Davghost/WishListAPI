@@ -10,5 +10,8 @@ class WishlistItem(db.Model):
     purchased = db.Column(db.Boolean, server_default=text("false"), nullable=False)
     sort_order = db.Column(db.Integer, nullable=True)
 
+    wishlist_id = db.Column(db.Integer, db.ForeignKey("wishlist.id"))
+    wishlist = db.relationship("Wishlist", back_populates="wishlist_items")
+
     def __repr__(self) -> str:
         return f"<Item {self.name}>"

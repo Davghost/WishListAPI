@@ -20,8 +20,9 @@ def create_app():
 
     migrate.init_app(app, db)
 
-    from controllers import wishlist_controller, user_controller
+    from controllers import wishlist_controller, user_controller, wishlists_controller
     app.register_blueprint(wishlist_controller)
+    app.register_blueprint(wishlists_controller)
     app.register_blueprint(user_controller)
 
     api.register(app)
