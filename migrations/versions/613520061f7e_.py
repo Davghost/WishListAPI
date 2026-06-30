@@ -46,7 +46,7 @@ def upgrade():
     sa.Column('link', sa.String(length=255), nullable=True),
     sa.Column('purchased', sa.Boolean(), server_default=sa.text('(false)'), nullable=False),
     sa.Column('sort_order', sa.Integer(), nullable=True),
-    sa.Column('wishlist_id', sa.Integer(), nullable=True),
+    sa.Column('wishlist_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['wishlist_id'], ['wishlist.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

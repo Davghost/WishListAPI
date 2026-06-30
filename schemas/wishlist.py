@@ -16,6 +16,7 @@ class OrmBase(ResponseBase):
 class WishlistResponse(OrmBase):
     name: str
     created_at: Optional[str] = None
+    wishlist_items: List[WishlistItemResponse] = []
 
 
 class WishlistCreate(BaseModel):

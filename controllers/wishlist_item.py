@@ -17,7 +17,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 wishlist_controller = Blueprint("wishlist_controller", __name__, url_prefix="/api/wishlist")
 
 @wishlist_controller.get("/")
-@api.validate(resp=Response(HTTP_200=WishlistItemsList, HTTP_404=WishlistItemMessage), tags=["wishlist"])
+@api.validate(resp=Response(HTTP_200=WishlistItemsList, HTTP_404=WishlistItemMessage), security=[{"bearerAuth": []}], tags=["wishlist"])
 @jwt_required()
 def getall_itens():
     """
@@ -51,7 +51,7 @@ def getall_itens():
     return response, 200
 
 @wishlist_controller.get("/<int:item_id>")
-@api.validate(resp=Response(HTTP_200=WishlistItemResponse, HTTP_404=WishlistItemMessage), tags=["wishlist"])
+@api.validate(resp=Response(HTTP_200=WishlistItemResponse, HTTP_404=WishlistItemMessage), security=[{"bearerAuth": []}], tags=["wishlist"])
 @jwt_required()
 def get_item(item_id):
     """
@@ -61,9 +61,6 @@ def get_item(item_id):
     item = db.session.get(WishlistItem, item_id)
 
     if item is None or item.wishlist is None or item.wishlist.user_id != current_user:
-        return {"id": None, "msg": f"There is no item with id {item_id}"}, 404
-
-    if item is None:
         return {"id": None, "msg": f"There is no item with id {item_id}"}, 404
     
     #return {
@@ -79,7 +76,7 @@ def get_item(item_id):
     return response, 200
 
 @wishlist_controller.post("/")
-@api.validate(json=WishlistItemCreate, resp=Response(HTTP_201=WishlistItemMessage), tags=["wishlist"])
+@api.validate(json=WishlistItemCreate, resp=Response(HTTP_201=WishlistItemMessage), security=[{"bearerAuth": []}], tags=["wishlist"])
 @jwt_required()
 def post_item():
     """
@@ -115,7 +112,7 @@ def post_item():
     return response, 201
 
 @wishlist_controller.put("/<int:item_id>")
-@api.validate(json=WishlistItemUpdate, resp=Response(HTTP_200=WishlistItemResponse, HTTP_404=WishlistItemMessage), tags=["wishlist"])
+@api.validate(json=WishlistItemUpdate, resp=Response(HTTP_200=WishlistItemResponse, HTTP_404=WishlistItemMessage), security=[{"bearerAuth": []}], tags=["wishlist"])
 @jwt_required()
 def put_item(item_id):
     """
@@ -140,7 +137,7 @@ def put_item(item_id):
     return response, 200
 
 @wishlist_controller.delete("/<int:item_id>")
-@api.validate(resp=Response(HTTP_200=WishlistItemMessage, HTTP_404=WishlistItemMessage), tags=["wishlist"])
+@api.validate(resp=Response(HTTP_200=WishlistItemMessage, HTTP_404=WishlistItemMessage), security=[{"bearerAuth": []}], tags=["wishlist"])
 @jwt_required()
 def delete_item(item_id):
     """

@@ -10,7 +10,11 @@ class Wishlist(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     user = db.relationship("User", back_populates="wishlists")
 
-    wishlist_items = db.relationship("WishlistItem", back_populates="wishlist", lazy="dynamic")
+    wishlist_items = db.relationship(
+        "WishlistItem",
+        back_populates="wishlist",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return f"<Wishlist {self.name}>"

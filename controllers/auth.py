@@ -2,17 +2,22 @@ from flask import Blueprint, request
 from factory import db, api
 from spectree import Response
 from sqlalchemy import select
-from models.user import User, CreateUser
+from models.user import User
 from flask_jwt_extended import create_access_token
 from schemas.utils_response import DefaultRespose
-from schemas.auth import LoginResponseMessage
+from schemas.auth import (
+    CreateUser,
+    LoginRequest,
+    LoginResponseMessage,
+    CreateUserResponse,
+)
 
 user_controller = Blueprint("user_controller", __name__, url_prefix="/users")
 
 
 
 @user_controller.post("/")
-@api.validate(json=CreateUser, resp=Response(HTTP_201=DefaultRespose), security={}, tags=["users"])
+@api.validate(json=CreateUser, resp=Response(HTTP_201=CreateUserResponse), security={}, tags=["users"])
 def create_user():
     """
     Create user
@@ -32,10 +37,10 @@ def create_user():
     db.session.add(user)
     db.session.commit()
 
-    return {"id": user.id, "msg": "User created successfully."}, 201
+    return CreateUserResponse(id=user.id, name=user.name, msg="User created successfully.").model_dump(), 201
 
 @user_controller.post("/login")
-@api.validate(json=CreateUser, resp=Response(HTTP_200=LoginResponseMessage, HTTP_401=DefaultRespose),security={}, tags=["users"])
+@api.validate(json=LoginRequest, resp=Response(HTTP_200=LoginResponseMessage, HTTP_401=DefaultRespose), security={}, tags=["users"])
 def login():
     """
     Login

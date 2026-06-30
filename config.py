@@ -5,16 +5,25 @@ load_dotenv()
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+
+def get_env_variable(name: str, default: str | None = None, required: bool = False) -> str:
+    value = os.environ.get(name, default)
+    if required and (value is None or value == ""):
+        raise EnvironmentError(f"The environment variable '{name}' must be set.")
+    return value
+
+
 class Config():
-    SECRET_KEY=os.environ.get("SECRET_KEY")
-    APP_TITLE="WishListAPI"
+    SECRET_KEY = get_env_variable("SECRET_KEY", required=True)
+    APP_TITLE = "WishListAPI"
 
-    JWT_SECRET_KEY=os.environ.get("JWT_SECRET_KEY")
+    JWT_SECRET_KEY = get_env_variable("JWT_SECRET_KEY", required=True)
     JWT_TOKEN_LOCATION = ["headers"]
+    JWT_HEADER_TYPE = "Bearer"
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
+    SQLALCHEMY_DATABASE_URI = get_env_variable(
         "DATABASE_URL",
-        "sqlite:///" + os.path.join(basedir, 'app.db')
+        default="sqlite:///" + os.path.join(basedir, "app.db"),
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

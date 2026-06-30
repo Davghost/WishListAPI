@@ -17,7 +17,7 @@ wishlists_controller = Blueprint("wishlists_controller", __name__, url_prefix="/
 
 
 @wishlists_controller.get("/")
-@api.validate(resp=Response(HTTP_200=WishlistList, HTTP_404=WishlistMessage), tags=["wishlists"])
+@api.validate(resp=Response(HTTP_200=WishlistList, HTTP_404=WishlistMessage), security=[{"bearerAuth": []}], tags=["wishlists"])
 @jwt_required()
 def get_wishlists():
     """
@@ -34,7 +34,7 @@ def get_wishlists():
 
 
 @wishlists_controller.get("/<int:wishlist_id>")
-@api.validate(resp=Response(HTTP_200=WishlistResponse, HTTP_404=WishlistMessage), tags=["wishlists"])
+@api.validate(resp=Response(HTTP_200=WishlistResponse, HTTP_404=WishlistMessage), security=[{"bearerAuth": []}], tags=["wishlists"])
 @jwt_required()
 def get_wishlist(wishlist_id):
     """
@@ -51,7 +51,7 @@ def get_wishlist(wishlist_id):
 
 
 @wishlists_controller.post("/")
-@api.validate(json=WishlistCreate, resp=Response(HTTP_201=WishlistMessage), tags=["wishlists"])
+@api.validate(json=WishlistCreate, resp=Response(HTTP_201=WishlistMessage), security=[{"bearerAuth": []}], tags=["wishlists"])
 @jwt_required()
 def post_wishlist():
     """
@@ -71,7 +71,7 @@ def post_wishlist():
 
 
 @wishlists_controller.put("/<int:wishlist_id>")
-@api.validate(json=WishlistUpdate, resp=Response(HTTP_200=WishlistResponse, HTTP_404=WishlistMessage), tags=["wishlists"])
+@api.validate(json=WishlistUpdate, resp=Response(HTTP_200=WishlistResponse, HTTP_404=WishlistMessage), security=[{"bearerAuth": []}], tags=["wishlists"])
 @jwt_required()
 def put_wishlist(wishlist_id):
     """
@@ -92,7 +92,7 @@ def put_wishlist(wishlist_id):
 
 
 @wishlists_controller.delete("/<int:wishlist_id>")
-@api.validate(resp=Response(HTTP_200=WishlistMessage, HTTP_404=WishlistMessage), tags=["wishlists"])
+@api.validate(resp=Response(HTTP_200=WishlistMessage, HTTP_404=WishlistMessage), security=[{"bearerAuth": []}], tags=["wishlists"])
 @jwt_required()
 def delete_wishlist(wishlist_id):
     """
