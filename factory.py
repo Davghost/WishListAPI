@@ -3,11 +3,22 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
 from spectree import SpecTree
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, SecurityScheme
 
 db = SQLAlchemy()
 migrate = Migrate()
-api = SpecTree("flask", title="WishListAPI", version="v.1.0", path="docs")
+api = SpecTree("flask",
+    title="WishListAPI",
+    version="v.1.0",
+    path="docs",
+    security_schemes=[
+        SecurityScheme(
+            name="api_key",
+            data={"type": "apiKey", "name": "Authorization", "in": "header"},
+        )
+    ],
+    security={"api_key": []},
+)
 jwt = JWTManager()
 
 def create_app():
@@ -16,7 +27,7 @@ def create_app():
     jwt.init_app(app)
     db.init_app(app)
 
-    from models import WishlistItem, User
+    from models import WishlistItem, User, Wishlist
 
     migrate.init_app(app, db)
 

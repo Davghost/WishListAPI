@@ -12,7 +12,7 @@ user_controller = Blueprint("user_controller", __name__, url_prefix="/users")
 
 
 @user_controller.post("/")
-@api.validate(json=CreateUser, resp=Response(HTTP_201=DefaultRespose), tags=["users"])
+@api.validate(json=CreateUser, resp=Response(HTTP_201=DefaultRespose), security={}, tags=["users"])
 def create_user():
     """
     Create user
@@ -35,7 +35,7 @@ def create_user():
     return {"id": user.id, "msg": "User created successfully."}, 201
 
 @user_controller.post("/login")
-@api.validate(json=CreateUser, resp=Response(HTTP_200=LoginResponseMessage, HTTP_401=DefaultRespose), tags=["users"])
+@api.validate(json=CreateUser, resp=Response(HTTP_200=LoginResponseMessage, HTTP_401=DefaultRespose),security={}, tags=["users"])
 def login():
     """
     Login
